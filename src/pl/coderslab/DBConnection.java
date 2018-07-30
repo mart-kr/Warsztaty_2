@@ -1,4 +1,4 @@
-package com.marta;
+package pl.coderslab;
 
 import com.mysql.jdbc.Connection;
 
