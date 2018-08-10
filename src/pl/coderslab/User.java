@@ -14,11 +14,13 @@ public class User {
     private String userName;
     private String email;
     private String password;
+    private int groupId;
 
-    public User(String userName, String email, String password) {
+    public User(String userName, String email, String password, int groupId) {
         this.userName = userName;
         this.email = email;
         this.setPassword(password);
+        this.groupId = groupId;
     }
 
     public User() {}
@@ -51,37 +53,44 @@ public class User {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
     public void saveToDB(Connection connection) throws SQLException {
         if (this.id == 0) {
-            String sql = "insert into users(user_name, email, password) values(?,?,?)";
+            String sql = "insert into users(user_name, email, password, user_group_id) values(?,?,?,?)";
             String generatedColumns[] = { "ID" };
-            PreparedStatement preparedStatement;
-            preparedStatement = connection.prepareStatement(sql, generatedColumns);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, generatedColumns);
             preparedStatement.setString(1, this.userName);
             preparedStatement.setString(2, this.email);
             preparedStatement.setString(3, this.password);
+            preparedStatement.setInt(4, this.groupId);
             preparedStatement.executeUpdate();
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-            if (rs.next()) {
-                this.id = rs.getInt(1);
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                this.id = resultSet.getInt(1);
             }
         } else {
-            String sql = "update users set user_name=?, email=?, password=? where id = ?";
-            PreparedStatement preparedStatement;
-            preparedStatement = connection.prepareStatement(sql);
+            String sql = "update users set user_name=?, email=?, password=?, user_group_id=?  where id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, this.userName);
             preparedStatement.setString(2, this.email);
             preparedStatement.setString(3, this.password);
-            preparedStatement.setInt(4, this.id);
+            preparedStatement.setInt(4, this.groupId);
+            preparedStatement.setInt(5, this.id);
             preparedStatement.executeUpdate();
         }
 
     }
 
-    static public User loadUserById(Connection connection, int id) throws SQLException {
+    public static User loadUserById(Connection connection, int id) throws SQLException {
         String sql = "select * from users where id=?";
-        PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(sql);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
@@ -90,16 +99,17 @@ public class User {
             loadedUser.userName = resultSet.getString("user_name");
             loadedUser.password = resultSet.getString("password");
             loadedUser.email = resultSet.getString("email");
+            loadedUser.groupId = resultSet.getInt("user_group_id");
             return loadedUser;
         } else {
             return null;
         }
     }
 
-    static public ArrayList<User> loadAllUsers(Connection connection) throws SQLException {
-        ArrayList<User> users = new ArrayList<User>();
-        String sql = "SELECT * FROM users"; PreparedStatement preparedStatement;
-        preparedStatement = connection.prepareStatement(sql);
+    public static ArrayList<User> loadAllUsers(Connection connection) throws SQLException {
+        ArrayList<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             User loadedUser = new User();
@@ -107,6 +117,7 @@ public class User {
             loadedUser.userName = resultSet.getString("user_name");
             loadedUser.password = resultSet.getString("password");
             loadedUser.email = resultSet.getString("email");
+            loadedUser.groupId = resultSet.getInt("user_group_id");
             users.add(loadedUser);
         }
         return users;
@@ -115,8 +126,7 @@ public class User {
     public void delete(Connection connection) throws SQLException {
         if (this.id != 0) {
             String sql = "delete from users where id=?";
-            PreparedStatement preparedStatement;
-            preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, this.id);
             preparedStatement.executeUpdate();
             this.id = 0;
@@ -125,6 +135,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "id: " + id + ", name: " + userName + ", email: " + email + ", password: " + password;
+        return "id: " + id + ", name: " + userName + ", email: " + email + ", group id: " + groupId;
     }
 }
