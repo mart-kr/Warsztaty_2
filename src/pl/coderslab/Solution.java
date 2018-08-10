@@ -101,6 +101,32 @@ public class Solution {
         String sql = "SELECT * FROM solutions";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
+        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        return solutions;
+    }
+
+    public static ArrayList<Solution> loadAllByUserId(Connection connection, int userId) throws SQLException {
+        ArrayList<Solution> solutions = new ArrayList<>();
+        String sql = "select * from solutions where user_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        return solutions;
+    }
+
+    public static ArrayList<Solution> loadAllByExerciseId(Connection connection, int exerciseId) throws SQLException {
+        ArrayList<Solution> solutions = new ArrayList<>();
+        String sql = "select * from solutions where exercise_id = ? order by updated desc";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, exerciseId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        return solutions;
+    }
+
+
+    private static void getSolutionData(ArrayList<Solution> solutions, ResultSet resultSet) throws SQLException {
         while (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
@@ -111,7 +137,6 @@ public class Solution {
             loadedSolution.userId = resultSet.getInt("user_id");
             solutions.add(loadedSolution);
         }
-        return solutions;
     }
 
     public void delete(Connection connection) throws SQLException {

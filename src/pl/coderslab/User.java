@@ -111,6 +111,21 @@ public class User {
         String sql = "SELECT * FROM users";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
+        getUserData((ArrayList<User>) users, resultSet);
+        return users;
+    }
+
+    public static ArrayList<User> loadAllByGroupId(Connection connection, int groupId) throws SQLException {
+        ArrayList<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users where user_group_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, groupId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        getUserData((ArrayList<User>) users, resultSet);
+        return users;
+    }
+
+    private static void getUserData(ArrayList<User> users, ResultSet resultSet) throws SQLException {
         while (resultSet.next()) {
             User loadedUser = new User();
             loadedUser.id = resultSet.getInt("id");
@@ -120,7 +135,6 @@ public class User {
             loadedUser.groupId = resultSet.getInt("user_group_id");
             users.add(loadedUser);
         }
-        return users;
     }
 
     public void delete(Connection connection) throws SQLException {
