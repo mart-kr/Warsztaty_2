@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ExercisesManagement {
+public class GroupsManagement {
 
     public static void main(String[] args) {
 
@@ -16,22 +16,22 @@ public class ExercisesManagement {
             boolean keepWorking = true;
 
             while (keepWorking) {
-                ArrayList<Exercise> allExercises = Exercise.loadAllExercises(connection.getConnection());
-                for (Exercise exercise : allExercises) {
-                    System.out.println(exercise);
+                ArrayList<Group> allGroups = Group.loadAllGroups(connection.getConnection());
+                for (Group group : allGroups) {
+                    System.out.println(group);
                 }
                 System.out.println();
                 String userAction = getUserAction();
 
                 if (userAction.equals("add")) {
-                    Exercise exercise = getNewExerciseData();
-                    exercise.saveToDB(connection.getConnection());
+                    Group group = getNewGroupData();
+                    group.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    Exercise exercise = getExerciseDataToEdit();
-                    exercise.saveToDB(connection.getConnection());
+                    Group group = getGroupDataToEdit();
+                    group.saveToDB(connection.getConnection());
                 } else if (userAction.equals("delete")) {
-                    Exercise exercise = getExerciseToDelete();
-                    exercise.delete(connection.getConnection());
+                    Group group = getGroupToDelete();
+                    group.delete(connection.getConnection());
                 } else {
                     keepWorking = false;
                 }
@@ -48,23 +48,21 @@ public class ExercisesManagement {
         String userAction = "";
 
         while (!userAction.equals("add") && !userAction.equals("edit") && !userAction.equals("delete") && !userAction.equals("quit")) {
-            System.out.println("Wybierz jedną z opcji:\n\nadd – dodanie zadania,\nedit – edycja zadania,\ndelete – usunięcie zadania,\nquit – zakończenie programu.");
+            System.out.println("Wybierz jedną z opcji:\n\nadd – dodanie grupy,\nedit – edycja grupy,\ndelete – usunięcie grupy,\nquit – zakończenie programu.");
             userAction = userInput.nextLine();
         }
         return userAction;
     }
 
-    public static Exercise getNewExerciseData() {
-        Exercise exercise = new Exercise();
-        System.out.println("Podaj tytuł:");
+    public static Group getNewGroupData() {
+        Group group = new Group();
+        System.out.println("Podaj nazwę:");
         Scanner userInput = new Scanner(System.in);
-        exercise.setTitle(userInput.nextLine());
-        System.out.println("Podaj opis:");
-        exercise.setDescription(userInput.nextLine());
-        return exercise;
+        group.setGroupName(userInput.nextLine());
+        return group;
     }
 
-    public static Exercise getExerciseDataToEdit() throws SQLException {
+    public static Group getGroupDataToEdit() throws SQLException {
         DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
                 "root",
                 "coderslab");
@@ -76,30 +74,26 @@ public class ExercisesManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Exercise exercise = Exercise.loadExerciseById(connection.getConnection(), userInput.nextInt());
+        Group group = Group.loadGroupById(connection.getConnection(), userInput.nextInt());
         userInput.nextLine();
-        System.out.println("Podaj tytuł:");
-        exercise.setTitle(userInput.nextLine());
-        System.out.println("Podaj opis:");
-        exercise.setDescription(userInput.nextLine());
-        return exercise;
+        System.out.println("Podaj nazwę:");
+        group.setGroupName(userInput.nextLine());
+        return group;
     }
 
-    public static Exercise getExerciseToDelete() throws SQLException {
+    public static Group getGroupToDelete() throws SQLException {
         DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
                 "root",
                 "coderslab");
 
         System.out.println("Podaj id:");
-        Scanner userInput = new Scanner((System.in));
+        Scanner userInput = new Scanner(System.in);
 
         while (!userInput.hasNextInt()) {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Exercise exercise = Exercise.loadExerciseById(connection.getConnection(), userInput.nextInt());
-        return exercise;
+        Group group = Group.loadGroupById(connection.getConnection(), userInput.nextInt());
+        return group;
     }
-
-
 }

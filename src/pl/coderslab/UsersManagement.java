@@ -46,7 +46,7 @@ public class UsersManagement {
         String userAction = "";
 
         while (!userAction.equals("add") && !userAction.equals("edit") && !userAction.equals("delete") && !userAction.equals("quit")) {
-            System.out.println("Wybierz jedną z opcji:\n\nadd – dodanie użytkownika,\nedit – edycja użytkownika,\ndelete – edycja użytkownika,\nquit – zakończenie programu.");
+            System.out.println("Wybierz jedną z opcji:\n\nadd – dodanie użytkownika,\nedit – edycja użytkownika,\ndelete – usunięcie użytkownika,\nquit – zakończenie programu.");
             userAction = userInput.nextLine();
         }
         return userAction;
