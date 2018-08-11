@@ -111,7 +111,7 @@ public class User {
         String sql = "SELECT * FROM users";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
-        getUserData((ArrayList<User>) users, resultSet);
+        getUserData(users, resultSet);
         return users;
     }
 
@@ -121,7 +121,7 @@ public class User {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, groupId);
         ResultSet resultSet = preparedStatement.executeQuery();
-        getUserData((ArrayList<User>) users, resultSet);
+        getUserData(users, resultSet);
         return users;
     }
 

@@ -81,6 +81,21 @@ public class Solution {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
+        return getSolutionData(resultSet);
+
+    }
+
+    public static Solution loadSolutionByExerciseAndUser(Connection connection, int exerciseId, int userId) throws SQLException {
+        String sql = "select * from solutions where exercise_id=? and user_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, exerciseId);
+        preparedStatement.setInt(2, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return getSolutionData(resultSet);
+
+    }
+
+    private static Solution getSolutionData(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
             Solution loadedSolution = new Solution();
             loadedSolution.id = resultSet.getInt("id");
@@ -93,7 +108,6 @@ public class Solution {
         } else {
             return null;
         }
-
     }
 
     public static ArrayList<Solution> loadAllSolutions(Connection connection) throws SQLException {
@@ -101,7 +115,7 @@ public class Solution {
         String sql = "SELECT * FROM solutions";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
-        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        getSolutionData(solutions, resultSet);
         return solutions;
     }
 
@@ -111,17 +125,27 @@ public class Solution {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, userId);
         ResultSet resultSet = preparedStatement.executeQuery();
-        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        getSolutionData(solutions, resultSet);
+        return solutions;
+    }
+
+    public static ArrayList<Solution> loadUnsolvedByUserId(Connection connection, int userId) throws SQLException {
+        ArrayList<Solution> solutions = new ArrayList<>();
+        String sql = "select * from solutions where user_id=? and description is null";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        getSolutionData(solutions, resultSet);
         return solutions;
     }
 
     public static ArrayList<Solution> loadAllByExerciseId(Connection connection, int exerciseId) throws SQLException {
         ArrayList<Solution> solutions = new ArrayList<>();
-        String sql = "select * from solutions where exercise_id = ? order by updated desc";
+        String sql = "select * from solutions where exercise_id=? order by updated desc";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, exerciseId);
         ResultSet resultSet = preparedStatement.executeQuery();
-        getSolutionData((ArrayList<Solution>) solutions, resultSet);
+        getSolutionData(solutions, resultSet);
         return solutions;
     }
 
