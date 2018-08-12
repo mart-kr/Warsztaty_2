@@ -8,7 +8,7 @@ public class ExercisesManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -65,7 +65,7 @@ public class ExercisesManagement {
     }
 
     public static Exercise getExerciseDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -86,7 +86,7 @@ public class ExercisesManagement {
     }
 
     public static Exercise getExerciseToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 

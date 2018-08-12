@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class UsersManagement {
 
     public static void main(String[] args) {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
         try {
@@ -72,7 +72,7 @@ public class UsersManagement {
     }
 
     public static User getUserDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -102,7 +102,7 @@ public class UsersManagement {
     }
 
     public static User getUserDataToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 

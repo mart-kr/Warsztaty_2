@@ -8,7 +8,7 @@ public class SolutionsManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -49,7 +49,7 @@ public class SolutionsManagement {
     }
 
     public static Solution getNewSolutionData() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -84,7 +84,7 @@ public class SolutionsManagement {
     }
 
     public static ArrayList<Solution> getUserSolutions() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 

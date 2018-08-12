@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class AddingSolutions {
 
     public static void main(String[] args) {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
         try {
@@ -25,8 +25,12 @@ public class AddingSolutions {
                         Exercise exercise = Exercise.loadExerciseById(connection.getConnection(), solution.getExerciseId());
                         System.out.println(exercise);
                     }
-                    Solution solutionToEdit = getSolutionToEdit(userId);
-                    solutionToEdit.saveToDB(connection.getConnection());
+                    if (!userUnsolvedItems.isEmpty()) {
+                        Solution solutionToEdit = getSolutionToEdit(userId);
+                        solutionToEdit.saveToDB(connection.getConnection());
+                    } else {
+                        System.out.println("Rozwiązałeś wszystkie zadania.");
+                    }
                 } else if (userAction.equals("view")) {
                     ArrayList<Solution> userSolutions = Solution.loadAllByUserId(connection.getConnection(), userId);
                     for (Solution userSolution : userSolutions) {
@@ -57,7 +61,7 @@ public class AddingSolutions {
     }
 
     public static Solution getSolutionToEdit(int userId) throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 

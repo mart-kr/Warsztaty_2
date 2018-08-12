@@ -8,7 +8,7 @@ public class GroupsManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -63,7 +63,7 @@ public class GroupsManagement {
     }
 
     public static Group getGroupDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
@@ -82,7 +82,7 @@ public class GroupsManagement {
     }
 
     public static Group getGroupToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false",
+        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
                 "coderslab");
 
