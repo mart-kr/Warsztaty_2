@@ -1,5 +1,6 @@
 package pl.coderslab;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,30 +9,26 @@ public class SolutionsManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
+        try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab");
-
-        try {
+                "coderslab")) {
             boolean keepWorking = true;
 
             while (keepWorking) {
                 String userAction = getUserAction();
 
                 if (userAction.equals("add")) {
-                    Solution solution = getNewSolutionData();
+                    Solution solution = getNewSolutionData(connection.getConnection());
                     solution.saveToDB(connection.getConnection());
                 } else if (userAction.equals("view")) {
-                    ArrayList<Solution> userSolutions = getUserSolutions();
+                    ArrayList<Solution> userSolutions = getUserSolutions(connection.getConnection());
                     for (Solution solution : userSolutions) {
                         System.out.println(solution);
                     }
                 } else {
                     keepWorking = false;
                 }
-
             }
-            connection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,13 +45,9 @@ public class SolutionsManagement {
         return userAction;
     }
 
-    public static Solution getNewSolutionData() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Solution getNewSolutionData(Connection connection) throws SQLException {
         Solution solution = new Solution();
-        ArrayList<User> allUsers = User.loadAllUsers(connection.getConnection());
+        ArrayList<User> allUsers = User.loadAllUsers(connection);
         for (User user : allUsers) {
             System.out.println(user);
         }
@@ -68,7 +61,7 @@ public class SolutionsManagement {
         }
         solution.setUserId(userInput.nextInt());
         userInput.nextLine();
-        ArrayList<Exercise> allExercises = Exercise.loadAllExercises(connection.getConnection());
+        ArrayList<Exercise> allExercises = Exercise.loadAllExercises(connection);
         for (Exercise exercise : allExercises) {
             System.out.println(exercise);
         }
@@ -83,18 +76,14 @@ public class SolutionsManagement {
         return solution;
     }
 
-    public static ArrayList<Solution> getUserSolutions() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static ArrayList<Solution> getUserSolutions(Connection connection) throws SQLException {
         System.out.println("Podaj id użytkownika:");
         Scanner userInput = new Scanner(System.in);
         while (!userInput.hasNextInt()) {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        ArrayList<Solution> userSolutions = Solution.loadAllByUserId(connection.getConnection(), userInput.nextInt());
+        ArrayList<Solution> userSolutions = Solution.loadAllByUserId(connection, userInput.nextInt());
         return userSolutions;
     }
 }

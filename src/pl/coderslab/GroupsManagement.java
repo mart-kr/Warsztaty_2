@@ -1,5 +1,6 @@
 package pl.coderslab;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,11 +9,9 @@ public class GroupsManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
+        try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab");
-
-        try {
+                "coderslab")) {
             boolean keepWorking = true;
 
             while (keepWorking) {
@@ -27,17 +26,15 @@ public class GroupsManagement {
                     Group group = getNewGroupData();
                     group.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    Group group = getGroupDataToEdit();
+                    Group group = getGroupDataToEdit(connection.getConnection());
                     group.saveToDB(connection.getConnection());
                 } else if (userAction.equals("delete")) {
-                    Group group = getGroupToDelete();
+                    Group group = getGroupToDelete(connection.getConnection());
                     group.delete(connection.getConnection());
                 } else {
                     keepWorking = false;
                 }
-
             }
-            connection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,11 +59,7 @@ public class GroupsManagement {
         return group;
     }
 
-    public static Group getGroupDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Group getGroupDataToEdit(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -74,18 +67,14 @@ public class GroupsManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Group group = Group.loadGroupById(connection.getConnection(), userInput.nextInt());
+        Group group = Group.loadGroupById(connection, userInput.nextInt());
         userInput.nextLine();
         System.out.println("Podaj nazwę:");
         group.setGroupName(userInput.nextLine());
         return group;
     }
 
-    public static Group getGroupToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Group getGroupToDelete(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -93,7 +82,7 @@ public class GroupsManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Group group = Group.loadGroupById(connection.getConnection(), userInput.nextInt());
+        Group group = Group.loadGroupById(connection, userInput.nextInt());
         return group;
     }
 }

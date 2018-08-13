@@ -5,7 +5,7 @@ import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBConnection {
+public class DBConnection implements AutoCloseable {
 
     private Connection connection;
 
@@ -21,7 +21,8 @@ public class DBConnection {
         return connection;
     }
 
-    public void closeConnection() throws SQLException {
+    @Override
+    public void close() throws SQLException {
         this.connection.close();
     }
 }

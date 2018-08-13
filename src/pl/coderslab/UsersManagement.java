@@ -1,5 +1,6 @@
 package pl.coderslab;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -7,10 +8,10 @@ import java.util.Scanner;
 public class UsersManagement {
 
     public static void main(String[] args) {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
+
+        try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab");
-        try {
+                "coderslab")) {
             boolean keepWorking = true;
 
             while (keepWorking) {
@@ -25,17 +26,15 @@ public class UsersManagement {
                     User user = getNewUserData();
                     user.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    User user = getUserDataToEdit();
+                    User user = getUserDataToEdit(connection.getConnection());
                     user.saveToDB(connection.getConnection());
                 } else if (userAction.equals("delete")) {
-                    User user = getUserDataToDelete();
+                    User user = getUserDataToDelete(connection.getConnection());
                     user.delete(connection.getConnection());
                 } else {
                     keepWorking = false;
                 }
-
             }
-            connection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -71,11 +70,7 @@ public class UsersManagement {
         return user;
     }
 
-    public static User getUserDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static User getUserDataToEdit(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -83,7 +78,7 @@ public class UsersManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        User user = User.loadUserById(connection.getConnection(), userInput.nextInt());
+        User user = User.loadUserById(connection, userInput.nextInt());
         userInput.nextLine();
         System.out.println("Podaj email:");
         user.setEmail(userInput.nextLine());
@@ -101,11 +96,7 @@ public class UsersManagement {
         return user;
     }
 
-    public static User getUserDataToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static User getUserDataToDelete(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -113,7 +104,7 @@ public class UsersManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        User user = User.loadUserById(connection.getConnection(), userInput.nextInt());
+        User user = User.loadUserById(connection, userInput.nextInt());
         return user;
     }
 

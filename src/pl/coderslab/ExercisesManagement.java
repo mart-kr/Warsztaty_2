@@ -1,5 +1,6 @@
 package pl.coderslab;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,11 +9,9 @@ public class ExercisesManagement {
 
     public static void main(String[] args) {
 
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
+        try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab");
-
-        try {
+                "coderslab")) {
             boolean keepWorking = true;
 
             while (keepWorking) {
@@ -27,17 +26,15 @@ public class ExercisesManagement {
                     Exercise exercise = getNewExerciseData();
                     exercise.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    Exercise exercise = getExerciseDataToEdit();
+                    Exercise exercise = getExerciseDataToEdit(connection.getConnection());
                     exercise.saveToDB(connection.getConnection());
                 } else if (userAction.equals("delete")) {
-                    Exercise exercise = getExerciseToDelete();
+                    Exercise exercise = getExerciseToDelete(connection.getConnection());
                     exercise.delete(connection.getConnection());
                 } else {
                     keepWorking = false;
                 }
-
             }
-            connection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,11 +61,7 @@ public class ExercisesManagement {
         return exercise;
     }
 
-    public static Exercise getExerciseDataToEdit() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Exercise getExerciseDataToEdit(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -76,7 +69,7 @@ public class ExercisesManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Exercise exercise = Exercise.loadExerciseById(connection.getConnection(), userInput.nextInt());
+        Exercise exercise = Exercise.loadExerciseById(connection, userInput.nextInt());
         userInput.nextLine();
         System.out.println("Podaj tytuł:");
         exercise.setTitle(userInput.nextLine());
@@ -85,11 +78,7 @@ public class ExercisesManagement {
         return exercise;
     }
 
-    public static Exercise getExerciseToDelete() throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Exercise getExerciseToDelete(Connection connection) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner((System.in));
 
@@ -97,7 +86,7 @@ public class ExercisesManagement {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Exercise exercise = Exercise.loadExerciseById(connection.getConnection(), userInput.nextInt());
+        Exercise exercise = Exercise.loadExerciseById(connection, userInput.nextInt());
         return exercise;
     }
 

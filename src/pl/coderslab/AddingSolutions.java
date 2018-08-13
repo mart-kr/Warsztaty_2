@@ -1,5 +1,6 @@
 package pl.coderslab;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -8,10 +9,10 @@ import java.util.Scanner;
 public class AddingSolutions {
 
     public static void main(String[] args) {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
+
+        try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab");
-        try {
+                "coderslab")) {
             int userId = Integer.valueOf(args[0]);
             boolean keepWorking = true;
 
@@ -26,7 +27,7 @@ public class AddingSolutions {
                         System.out.println(exercise);
                     }
                     if (!userUnsolvedItems.isEmpty()) {
-                        Solution solutionToEdit = getSolutionToEdit(userId);
+                        Solution solutionToEdit = getSolutionToEdit(connection.getConnection(), userId);
                         solutionToEdit.saveToDB(connection.getConnection());
                     } else {
                         System.out.println("Rozwiązałeś wszystkie zadania.");
@@ -60,11 +61,7 @@ public class AddingSolutions {
         return userAction;
     }
 
-    public static Solution getSolutionToEdit(int userId) throws SQLException {
-        DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
-                "root",
-                "coderslab");
-
+    public static Solution getSolutionToEdit(Connection connection, int userId) throws SQLException {
         System.out.println("Podaj id:");
         Scanner userInput = new Scanner(System.in);
 
@@ -72,7 +69,7 @@ public class AddingSolutions {
             userInput.next();
             System.out.println("Podaj id!");
         }
-        Solution solution = Solution.loadSolutionByExerciseAndUser(connection.getConnection(), userInput.nextInt(), userId);
+        Solution solution = Solution.loadSolutionByExerciseAndUser(connection, userInput.nextInt(), userId);
         userInput.nextLine();
         System.out.println("Podaj rozwiązanie:");
         solution.setDescription(userInput.nextLine()); //TODO: spróbować przerobić, żeby przyjmować więcej linii
