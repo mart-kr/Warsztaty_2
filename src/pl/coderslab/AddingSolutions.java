@@ -12,12 +12,12 @@ public class AddingSolutions {
 
         try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab")) {
+                "coderslab"); Scanner userInput = new Scanner(System.in)) {
             int userId = Integer.valueOf(args[0]);
             boolean keepWorking = true;
 
             while (keepWorking) {
-                String userAction = getUserAction();
+                String userAction = getUserAction(userInput);
 
                 if (userAction.equals("add")) {
                     System.out.println("Zadania bez rozwiązań:");
@@ -27,7 +27,7 @@ public class AddingSolutions {
                         System.out.println(exercise);
                     }
                     if (!userUnsolvedItems.isEmpty()) {
-                        Solution solutionToEdit = getSolutionToEdit(connection.getConnection(), userId);
+                        Solution solutionToEdit = getSolutionToEdit(connection.getConnection(), userId, userInput);
                         solutionToEdit.saveToDB(connection.getConnection());
                     } else {
                         System.out.println("Rozwiązałeś wszystkie zadania.");
@@ -50,8 +50,7 @@ public class AddingSolutions {
         }
     }
 
-    public static String getUserAction() {
-        Scanner userInput = new Scanner(System.in);
+    private static String getUserAction(Scanner userInput) {
         String userAction = "";
 
         while (!userAction.equals("add") && !userAction.equals("view") && !userAction.equals("quit")) {
@@ -61,9 +60,8 @@ public class AddingSolutions {
         return userAction;
     }
 
-    public static Solution getSolutionToEdit(Connection connection, int userId) throws SQLException {
+    private static Solution getSolutionToEdit(Connection connection, int userId, Scanner userInput) throws SQLException {
         System.out.println("Podaj id:");
-        Scanner userInput = new Scanner(System.in);
 
         while (!userInput.hasNextInt()) {
             userInput.next();

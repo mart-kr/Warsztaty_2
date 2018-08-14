@@ -175,8 +175,7 @@ public class Solution {
 
     @Override
     public String toString() {
-        return "id: " + id + ", created: " + created + ", updated: " + updated + ", description: " + description + ", exercise id: " + exerciseId + ", user id: " + userId;
+        return "id: " + id + ", utworzono: " + created + ", aktualizowano: " + updated + ", opis: " + description + ", id zadania: " + exerciseId + ", id użytkownika: " + userId;
     }
-
 
 }

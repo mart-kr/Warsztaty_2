@@ -11,7 +11,7 @@ public class GroupsManagement {
 
         try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab")) {
+                "coderslab"); Scanner userInput = new Scanner(System.in)) {
             boolean keepWorking = true;
 
             while (keepWorking) {
@@ -20,17 +20,25 @@ public class GroupsManagement {
                     System.out.println(group);
                 }
                 System.out.println();
-                String userAction = getUserAction();
+                String userAction = getUserAction(userInput);
 
                 if (userAction.equals("add")) {
-                    Group group = getNewGroupData();
+                    Group group = getNewGroupData(userInput);
                     group.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    Group group = getGroupDataToEdit(connection.getConnection());
-                    group.saveToDB(connection.getConnection());
+                    Group group = getGroupDataToEdit(connection.getConnection(), userInput);
+                    if (group != null) {
+                        group.saveToDB(connection.getConnection());
+                    } else {
+                        System.out.println("Grupa o podanym id nie istnieje");
+                    }
                 } else if (userAction.equals("delete")) {
-                    Group group = getGroupToDelete(connection.getConnection());
-                    group.delete(connection.getConnection());
+                    Group group = getGroupToDelete(connection.getConnection(), userInput);
+                    if (group != null) {
+                        group.delete(connection.getConnection());
+                    } else {
+                        System.out.println("Grupa o podanym id nie istnieje");
+                    }
                 } else {
                     keepWorking = false;
                 }
@@ -40,8 +48,7 @@ public class GroupsManagement {
         }
     }
 
-    public static String getUserAction() {
-        Scanner userInput = new Scanner(System.in);
+    private static String getUserAction(Scanner userInput) {
         String userAction = "";
 
         while (!userAction.equals("add") && !userAction.equals("edit") && !userAction.equals("delete") && !userAction.equals("quit")) {
@@ -51,38 +58,40 @@ public class GroupsManagement {
         return userAction;
     }
 
-    public static Group getNewGroupData() {
+    private static Group getNewGroupData(Scanner userInput) {
         Group group = new Group();
         System.out.println("Podaj nazwę:");
-        Scanner userInput = new Scanner(System.in);
         group.setGroupName(userInput.nextLine());
         return group;
     }
 
-    public static Group getGroupDataToEdit(Connection connection) throws SQLException {
+    private static Group getGroupDataToEdit(Connection connection, Scanner userInput) throws SQLException {
         System.out.println("Podaj id:");
-        Scanner userInput = new Scanner(System.in);
 
         while (!userInput.hasNextInt()) {
             userInput.next();
             System.out.println("Podaj id!");
         }
         Group group = Group.loadGroupById(connection, userInput.nextInt());
+        if (group != null) {
+            userInput.nextLine();
+            System.out.println("Podaj nazwę:");
+            group.setGroupName(userInput.nextLine());
+            return group;
+        } else {
+            return null;
+        }
+    }
+
+    private static Group getGroupToDelete(Connection connection, Scanner userInput) throws SQLException {
+        System.out.println("Podaj id:");
+
+        while (!userInput.hasNextInt()) {
+            userInput.next();
+            System.out.println("Podaj id!");
+        }
+        int id = userInput.nextInt();
         userInput.nextLine();
-        System.out.println("Podaj nazwę:");
-        group.setGroupName(userInput.nextLine());
-        return group;
-    }
-
-    public static Group getGroupToDelete(Connection connection) throws SQLException {
-        System.out.println("Podaj id:");
-        Scanner userInput = new Scanner(System.in);
-
-        while (!userInput.hasNextInt()) {
-            userInput.next();
-            System.out.println("Podaj id!");
-        }
-        Group group = Group.loadGroupById(connection, userInput.nextInt());
-        return group;
+        return Group.loadGroupById(connection, id);
     }
 }

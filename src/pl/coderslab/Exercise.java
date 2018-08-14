@@ -104,7 +104,7 @@ public class Exercise {
 
     @Override
     public String toString() {
-        return "id: " + id + ", title: " + title + ", description: " + description;
+        return "id: " + id + ", tytuł: " + title + ", opis: " + description;
     }
 
 }

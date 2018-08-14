@@ -149,6 +149,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "id: " + id + ", name: " + userName + ", email: " + email + ", group id: " + groupId;
+        return "id: " + id + ", imię: " + userName + ", email: " + email + ", id grupy: " + groupId;
     }
 }

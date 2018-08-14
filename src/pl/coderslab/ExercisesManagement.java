@@ -11,7 +11,7 @@ public class ExercisesManagement {
 
         try (DBConnection connection = new DBConnection("jdbc:mysql://localhost:3306/programming_school?useSSL=false&characterEncoding=utf8",
                 "root",
-                "coderslab")) {
+                "coderslab"); Scanner userInput = new Scanner(System.in)) {
             boolean keepWorking = true;
 
             while (keepWorking) {
@@ -20,17 +20,25 @@ public class ExercisesManagement {
                     System.out.println(exercise);
                 }
                 System.out.println();
-                String userAction = getUserAction();
+                String userAction = getUserAction(userInput);
 
                 if (userAction.equals("add")) {
-                    Exercise exercise = getNewExerciseData();
+                    Exercise exercise = getNewExerciseData(userInput);
                     exercise.saveToDB(connection.getConnection());
                 } else if (userAction.equals("edit")) {
-                    Exercise exercise = getExerciseDataToEdit(connection.getConnection());
-                    exercise.saveToDB(connection.getConnection());
+                    Exercise exercise = getExerciseDataToEdit(connection.getConnection(), userInput);
+                    if (exercise !=null) {
+                        exercise.saveToDB(connection.getConnection());
+                    } else {
+                        System.out.println("Zadanie o podanym id nie istnieje.");
+                    }
                 } else if (userAction.equals("delete")) {
-                    Exercise exercise = getExerciseToDelete(connection.getConnection());
-                    exercise.delete(connection.getConnection());
+                    Exercise exercise = getExerciseToDelete(connection.getConnection(), userInput);
+                    if (exercise != null) {
+                        exercise.delete(connection.getConnection());
+                    } else {
+                        System.out.println("Zadanie o podanym id nie istnieje.");
+                    }
                 } else {
                     keepWorking = false;
                 }
@@ -40,8 +48,7 @@ public class ExercisesManagement {
         }
     }
 
-    public static String getUserAction() {
-        Scanner userInput = new Scanner(System.in);
+    private static String getUserAction(Scanner userInput) {
         String userAction = "";
 
         while (!userAction.equals("add") && !userAction.equals("edit") && !userAction.equals("delete") && !userAction.equals("quit")) {
@@ -51,44 +58,46 @@ public class ExercisesManagement {
         return userAction;
     }
 
-    public static Exercise getNewExerciseData() {
+    private static Exercise getNewExerciseData(Scanner userInput) {
         Exercise exercise = new Exercise();
         System.out.println("Podaj tytuł:");
-        Scanner userInput = new Scanner(System.in);
         exercise.setTitle(userInput.nextLine());
         System.out.println("Podaj opis:");
         exercise.setDescription(userInput.nextLine());
         return exercise;
     }
 
-    public static Exercise getExerciseDataToEdit(Connection connection) throws SQLException {
+    private static Exercise getExerciseDataToEdit(Connection connection, Scanner userInput) throws SQLException {
         System.out.println("Podaj id:");
-        Scanner userInput = new Scanner(System.in);
 
         while (!userInput.hasNextInt()) {
             userInput.next();
             System.out.println("Podaj id!");
         }
         Exercise exercise = Exercise.loadExerciseById(connection, userInput.nextInt());
+        if (exercise != null) {
+            userInput.nextLine();
+            System.out.println("Podaj tytuł:");
+            exercise.setTitle(userInput.nextLine());
+            System.out.println("Podaj opis:");
+            exercise.setDescription(userInput.nextLine());
+            return exercise;
+        } else {
+            return null;
+        }
+
+    }
+
+    private static Exercise getExerciseToDelete(Connection connection, Scanner userInput) throws SQLException {
+        System.out.println("Podaj id:");
+
+        while (!userInput.hasNextInt()) {
+            userInput.next();
+            System.out.println("Podaj id!");
+        }
+        int id = userInput.nextInt();
         userInput.nextLine();
-        System.out.println("Podaj tytuł:");
-        exercise.setTitle(userInput.nextLine());
-        System.out.println("Podaj opis:");
-        exercise.setDescription(userInput.nextLine());
-        return exercise;
+        return Exercise.loadExerciseById(connection, id);
     }
-
-    public static Exercise getExerciseToDelete(Connection connection) throws SQLException {
-        System.out.println("Podaj id:");
-        Scanner userInput = new Scanner((System.in));
-
-        while (!userInput.hasNextInt()) {
-            userInput.next();
-            System.out.println("Podaj id!");
-        }
-        Exercise exercise = Exercise.loadExerciseById(connection, userInput.nextInt());
-        return exercise;
-    }
-
 
 }
